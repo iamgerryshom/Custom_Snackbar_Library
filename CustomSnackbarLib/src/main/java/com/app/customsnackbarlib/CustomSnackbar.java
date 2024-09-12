@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -16,10 +17,9 @@ public class CustomSnackbar {
 
     private static final int ANIMATION_DURATION = 300;
 
-    public static CustomSnackbar show(ViewGroup rootView, String message, int duration, int type) {
+    public static void show(ViewGroup rootView, String message, int duration, int type) {
         View customSnackbarView = createSnackbarView(rootView, message, type);
         showSnackbar(rootView, customSnackbarView, duration);
-        return new CustomSnackbar();
     }
 
     public static CustomSnackbar myLayout(ViewGroup view, int layoutResId, int duration) {
@@ -62,7 +62,7 @@ public class CustomSnackbar {
     }
 
     private static void showSnackbar(ViewGroup rootView, View customView, int duration) {
-        customView.setTranslationY(-customView.getHeight());
+//        customView.setTranslationY(-customView.getHeight());
 
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -75,7 +75,16 @@ public class CustomSnackbar {
             rootView.addView(customView, params);
         }
 
-        animateIn(customView);
+        customView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                // Remove listener to prevent this from being called multiple times
+                customView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                // Start animation after layout is complete and height is known
+                animateIn(customView);
+            }
+        });
         addSwipeToDismiss(customView);
 
         int durationInMillis = getDurationInMillis(duration);
@@ -89,7 +98,7 @@ public class CustomSnackbar {
         view.animate()
                 .translationY(0)
                 .setDuration(ANIMATION_DURATION)
-                .setStartDelay(0)
+                .setStartDelay(300)
                 .start();
     }
 
