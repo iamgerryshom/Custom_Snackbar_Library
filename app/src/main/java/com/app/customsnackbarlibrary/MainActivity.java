@@ -1,6 +1,7 @@
 package com.app.customsnackbarlibrary;
 
 import android.os.Bundle;
+import android.widget.RelativeLayout;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,12 +26,12 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        CoordinatorLayout main = findViewById(R.id.main);
+        RelativeLayout main = findViewById(R.id.main);
 
         CustomSnackbar.show(main,"This is a Twitter-like top notification bar!",
-                Snackbar.LENGTH_LONG,3);
+                Snackbar.LENGTH_INDEFINITE,3);
 
-//        CustomSnackbar.myLayout(main,R.layout.custom_snackbar,Snackbar.LENGTH_INDEFINITE);
+//        CustomSnackbar.customLayout(main,R.layout.custom_snackbar,Snackbar.LENGTH_LONG);
 
     }
 

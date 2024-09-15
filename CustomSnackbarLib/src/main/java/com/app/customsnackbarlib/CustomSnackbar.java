@@ -1,5 +1,10 @@
 package com.app.customsnackbarlib;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -14,18 +19,16 @@ import android.widget.TextView;
 import com.google.android.material.snackbar.Snackbar;
 
 public class CustomSnackbar {
-
-    private static final int ANIMATION_DURATION = 300;
+    private static final AnimatorSet animatorSet = new AnimatorSet();
 
     public static void show(ViewGroup rootView, String message, int duration, int type) {
         View customSnackbarView = createSnackbarView(rootView, message, type);
         showSnackbar(rootView, customSnackbarView, duration);
     }
 
-    public static CustomSnackbar myLayout(ViewGroup view, int layoutResId, int duration) {
+    public static void customLayout(ViewGroup view, int layoutResId, int duration) {
         View customView = LayoutInflater.from(view.getContext()).inflate(layoutResId, null);
         showSnackbar(view, customView, duration);
-        return new CustomSnackbar();
     }
 
     private static View createSnackbarView(ViewGroup rootView, String message, int type) {
@@ -62,7 +65,6 @@ public class CustomSnackbar {
     }
 
     private static void showSnackbar(ViewGroup rootView, View customView, int duration) {
-//        customView.setTranslationY(-customView.getHeight());
 
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -80,8 +82,6 @@ public class CustomSnackbar {
             public void onGlobalLayout() {
                 // Remove listener to prevent this from being called multiple times
                 customView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
-                // Start animation after layout is complete and height is known
                 animateIn(customView);
             }
         });
@@ -94,14 +94,17 @@ public class CustomSnackbar {
     }
 
     private static void animateIn(View view) {
-        view.setTranslationY(-view.getHeight());
-        view.animate()
-                .translationY(0)
-                .setDuration(ANIMATION_DURATION)
-                .setStartDelay(300)
-                .start();
+        int distance = -view.getHeight();
+        view.setVisibility(View.VISIBLE);
+        animatorSet.playTogether(
+                ObjectAnimator.ofFloat(view, "alpha", 0, 1),
+                ObjectAnimator.ofFloat(view, "translationY", distance, 0)
+        );
+        animatorSet.setDuration(500);
+        animatorSet.start();
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private static void addSwipeToDismiss(View customSnackbarView) {
         final float SWIPE_THRESHOLD = 100; // Minimum distance for a swipe to be detected
         final float[] startX = new float[1];
@@ -137,13 +140,25 @@ public class CustomSnackbar {
                     if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
                         // Horizontal swipe detected
                         hide(customSnackbarView);
-                    } else if (-deltaY > SWIPE_THRESHOLD) {
-                        // Upward swipe detected
-                        customSnackbarView.animate()
-                                .translationY(0)
-                                .setDuration(0)
-                                .withEndAction(removeView(customSnackbarView))
-                                .start();
+                    } else if (-deltaY > 10) {
+                        int distance = -customSnackbarView.getHeight();
+
+                        // Playing both the translation and alpha animations together (swipe out and fade out)
+                        animatorSet.playTogether(
+                                ObjectAnimator.ofFloat(customSnackbarView, "alpha", 1, 0), // Fade out
+                                ObjectAnimator.ofFloat(customSnackbarView, "translationY", 0, distance) // Move upward
+                        );
+
+                        animatorSet.setDuration(300);
+
+                        // Add listener to handle the view removal after the animation ends
+                        animatorSet.addListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                removeView(customSnackbarView);
+                            }
+                        });
+                        animatorSet.start();
                     } else {
                         resetPosition(customSnackbarView);
                     }
@@ -155,13 +170,12 @@ public class CustomSnackbar {
 
     private static void resetPosition(View view) {
         view.animate()
-                .x(0)
+                .x(20)
                 .setDuration(200)
                 .setInterpolator(new AccelerateInterpolator())
                 .start();
     }
 
-    // Hide method with direction-based animation
     public static void hide(View customSnackbarView) {
         float currentX = customSnackbarView.getX();
         float currentY = customSnackbarView.getY();
@@ -186,20 +200,15 @@ public class CustomSnackbar {
     }
 
     private static Runnable removeView(final View view) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                if (view.getParent() != null) {
-                    ((ViewGroup) view.getParent()).removeView(view);
-                }
+        return () -> {
+            if (view.getParent() != null) {
+                ((ViewGroup) view.getParent()).removeView(view);
             }
         };
     }
 
     private static int getDurationInMillis(int duration) {
         switch (duration) {
-            case Snackbar.LENGTH_SHORT:
-                return 2000;
             case Snackbar.LENGTH_LONG:
                 return 3500;
             case Snackbar.LENGTH_INDEFINITE:
