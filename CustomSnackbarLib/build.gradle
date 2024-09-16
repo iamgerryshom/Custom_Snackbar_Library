@@ -56,7 +56,7 @@ afterEvaluate {
                 from components.findByName('release')
                 // You can then customize attributes of the publication as shown below.
                 groupId = 'com.github.tomleejumah'
-                artifactId = 'custom_snackbar_library'
+                artifactId = 'Custom_Snackbar_Library'
                 version = '1.0.0'
             }
         }
