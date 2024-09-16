@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         RelativeLayout main = findViewById(R.id.main);
 
         CustomSnackbar.show(main,"This is a Twitter-like top notification bar!",
-                Snackbar.LENGTH_INDEFINITE,3);
+                Snackbar.LENGTH_LONG,3);
 
 //        CustomSnackbar.customLayout(main,R.layout.custom_snackbar,Snackbar.LENGTH_LONG);
 
