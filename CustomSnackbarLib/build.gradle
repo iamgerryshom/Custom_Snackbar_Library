@@ -1,8 +1,10 @@
 plugins {
-    alias(libs.plugins.android.library)
-//    id 'com.android.library'
+    id 'com.android.library'
     id 'maven-publish'
 }
+
+group = 'com.github.tomleejumah'
+version = '1.0.0'
 
 android {
     namespace 'com.app.customsnackbarlib'
@@ -29,35 +31,43 @@ android {
 }
 
 dependencies {
-
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.core.ktx
-    testImplementation libs.junit
-    androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
-//    implementation 'androidx.appcompat:appcompat:1.6.1'
-//    implementation 'com.google.android.material:material:1.10.0'
-//    implementation 'androidx.core:core-ktx:1.12.0'
-//    testImplementation 'junit:junit:4.13.2'
-//    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.10.0'
+    implementation 'androidx.core:core-ktx:1.12.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
-
 
 afterEvaluate {
     publishing {
         publications {
-            // Creates a Maven publication called "release".
             release(MavenPublication) {
-                // Applies the component for the release build variant.
 //                from components.release
                 from components.findByName('release')
-                // You can then customize attributes of the publication as shown below.
+
                 groupId = 'com.github.tomleejumah'
                 artifactId = 'Custom_Snackbar_Library'
                 version = '1.0.0'
+
+                pom {
+                    name = 'Custom_Snackbar_Library'
+                    description = 'A custom Snackbar library for Android'
+                    url = 'https://github.com/tomleejumah/Custom_Snackbar_Library'
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+                    developers {
+                        developer {
+                            id = 'tomleejumah'
+                            name = 'Tom Lee Jumah'
+                            email = 'tommlyjumah@gmail.com'
+                        }
+                    }
+                }
             }
         }
     }

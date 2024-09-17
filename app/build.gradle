@@ -31,8 +31,8 @@ android {
 dependencies {
 
     //my lib
-    implementation project(':CustomSnackbarLib')
-//    implementation 'com.github.tomleejumah:Custom_Snackbar_Library:1.0.0'
+//    implementation project(':CustomSnackbarLib')
+    implementation 'com.github.tomleejumah:Custom_Snackbar_Library:v1.0.2'
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
