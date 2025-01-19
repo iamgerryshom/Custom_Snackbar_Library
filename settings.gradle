@@ -23,4 +23,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Custom Snackbar Library"
 include ':app'
-include ':CustomSnackbarLib'
+//include ':CustomSnackbarLib'
