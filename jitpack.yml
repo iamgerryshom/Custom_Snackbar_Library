@@ -1,8 +1,7 @@
-
 jdk:
   - openjdk17
 before_install:
   - ./scripts/prepareJitpackEnvironment.sh
 install:
-  - FILE="-Dfile=CustomSnackbarLib-release.aar"
-  - mvn install:install-file $FILE -DgroupId=com.github.iamgerryshom -DartifactId=CustomSnackBar -Dversion=1.0.0 -Dpackaging=aar -DgeneratePom=true
+  - FILE="build/outputs/aar/$(basename "$(pwd)")-release.aar"
+  - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.iamgerryshom -DartifactId=CustomSnackBar -Dversion=1.0.0 -Dpackaging=aar -DgeneratePom=true
