@@ -36,11 +36,8 @@ android {
 
 dependencies {
 
-    //my lib
-//    implementation project(':CustomSnackbarLib')
-    implementation 'com.github.tomleejumah:Custom_Snackbar_Library:v1.0.3'
+    implementation project(':CustomSnackbarLib')
 
-//    implementation 'com.github.tomleejumah:Weekdays-Selector:0.0.1'
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
