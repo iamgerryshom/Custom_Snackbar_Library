@@ -3,4 +3,18 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="snackbarcolor">#2196F3</color>
+
+    <color name="success_color">#3E6A40</color>  <!-- More subdued green for success -->
+    <color name="error_color">#7E3232</color>    <!-- Deeper red for error -->
+    <color name="warning_color">#80613A</color>  <!-- Less vibrant amber for warning -->
+    <color name="info_color">#2D5C93</color>     <!-- Muted blue for information -->
+
+    <color name="light_info_color">#92BFF3</color>
+    <color name="light_error_color">#F89797</color>
+    <color name="light_success_color">#71DF77</color>
+    <color name="light_warning_color">#EDA951</color>
+
+
+
+
 </resources>

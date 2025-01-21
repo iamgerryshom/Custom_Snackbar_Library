@@ -1,5 +1,9 @@
 jdk:
   - openjdk17
 before_install:
-  - sdk install java 17.0.10-open
-  - sdk use java 17.0.10-open
+  - ./scripts/prepareJitpackEnvironment.sh
+  - ./gradlew assembleRelease
+install:
+  - FILE="CustomSnackbarLib/build/outputs/aar/CustomSnackbarLib-release.aar"
+  - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.tomleejumah -DartifactId=Custom_Snackbar_Library -Dversion=1.0.0 -Dpackaging=aar -DgeneratePom=true
+

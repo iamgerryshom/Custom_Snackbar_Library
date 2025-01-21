@@ -1,10 +1,7 @@
 plugins {
-    id 'com.android.library'
-    id 'maven-publish'
+    alias(libs.plugins.android.library)
+    id("maven-publish") // For publishing
 }
-
-group = 'com.github.tomleejumah'
-version = '1.0.4'
 
 android {
     namespace 'com.app.customsnackbarlib'
@@ -12,7 +9,6 @@ android {
 
     defaultConfig {
         minSdk 23
-        targetSdk 34
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -22,53 +18,65 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            consumerProguardFiles 'consumer-rules.pro'
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+
 }
 
-dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.10.0'
-    implementation 'androidx.core:core-ktx:1.12.0'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
 
-afterEvaluate {
-    publishing {
-        publications {
-            release(MavenPublication) {
-//                from components.release
-                from components.findByName('release')
 
-                groupId = 'com.github.tomleejumah'
-                artifactId = 'Custom_Snackbar_Library'
-                version = '1.0.4'
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
-                pom {
-                    name = 'Custom_Snackbar_Library'
-                    description = 'A custom Snackbar library for Android'
-                    url = 'https://github.com/tomleejumah/Custom_Snackbar_Library'
-                    licenses {
-                        license {
-                            name = 'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-                    developers {
-                        developer {
-                            id = 'tomleejumah'
-                            name = 'Tom Lee Jumah'
-                            email = 'tommlyjumah@gmail.com'
-                        }
+project.afterEvaluate {
+    // Ensure that publishing happens after the release AAR is generated
+    afterEvaluate {
+        publishing {
+            publications {
+                libraryProject(MavenPublication) {
+                    groupId 'com.github.tomleejumah'
+                    artifactId 'Custom_Snackbar_Library'
+                    version 'v1.0.0'
+                    artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
+                }
+            }
+            repositories {
+                maven {
+                    url 'https://jitpack.io'
+
+                    credentials {
+                        username = project.findProperty('jitpack.user') ?: System.getenv('JITPACK_USER')
+                        password = project.findProperty('jitpack.token') ?: System.getenv('JITPACK_TOKEN')
                     }
                 }
             }
         }
+
+        // Ensure the 'publishLibraryProjectPublicationToMavenRepository' depends on the 'bundleReleaseAar' task
+        tasks.publishLibraryProjectPublicationToMavenRepository.dependsOn tasks.bundleReleaseAar
     }
+}
+
+
+dependencies {
+
+    implementation libs.appcompat
+    implementation libs.material
+    implementation libs.core.ktx
+    testImplementation libs.junit
+    androidTestImplementation libs.ext.junit
+    androidTestImplementation libs.espresso.core
 }
