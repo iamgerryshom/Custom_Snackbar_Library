@@ -45,8 +45,6 @@ public class MainActivity extends AppCompatActivity {
         binding.success.setOnClickListener(v -> {
             CustomSnackBar.make(binding.getRoot(), "Connection Established", "You are now connected to the server.")
                     .setCustomSnackBarType(CustomSnackBarType.SUCCESS)
-                    .setStrokeWidth(0)
-                    .setStrokeColor(R.color.white)
                     .show();
         });
 

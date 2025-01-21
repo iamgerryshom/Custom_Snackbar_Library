@@ -85,33 +85,26 @@ public class CustomAnimator {
                                                   float fromScale, float toScale,
                                                   float fromAlpha, float toAlpha,
                                                   long duration, Interpolator interpolator) {
-        // Default to OvershootInterpolator if none provided
         if (interpolator == null) {
             interpolator = new OvershootInterpolator();
         }
-
-        // Create the animation set
         final AnimationSet animationSet = new AnimationSet(true);
         animationSet.setInterpolator(interpolator);
 
-        // Translation animation for sliding effect
         final TranslateAnimation translateAnimation = new TranslateAnimation(fromXDelta, toXDelta, fromYDelta, toYDelta);
         translateAnimation.setDuration(duration);
-        translateAnimation.setFillAfter(true);  // Retain final position
+        translateAnimation.setFillAfter(true);
 
-        // Scale animation for pop-in/pop-out effect
         final ScaleAnimation scaleAnimation = new ScaleAnimation(fromScale, toScale, fromScale, toScale,
-                Animation.RELATIVE_TO_SELF, 0.5f,  // Pivot X: center of the view
-                Animation.RELATIVE_TO_SELF, 0.5f); // Pivot Y: center of the view
+                Animation.RELATIVE_TO_SELF, 0.5f,
+                Animation.RELATIVE_TO_SELF, 0.5f);
         scaleAnimation.setDuration(duration);
         scaleAnimation.setFillAfter(true);
 
-        // Alpha animation for fading effect
         final AlphaAnimation alphaAnimation = new AlphaAnimation(fromAlpha, toAlpha);
         alphaAnimation.setDuration(duration);
         alphaAnimation.setFillAfter(true);
 
-        // Add all animations to the set
         animationSet.addAnimation(translateAnimation);
         animationSet.addAnimation(scaleAnimation);
         animationSet.addAnimation(alphaAnimation);
