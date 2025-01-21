@@ -5,5 +5,5 @@ before_install:
   - ./gradlew assembleRelease
 install:
   - FILE="CustomSnackbarLib/build/outputs/aar/CustomSnackbarLib-release.aar"
-  - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.iamgerryshom -DartifactId=CustomSnackBar -Dversion=1.0.0 -Dpackaging=aar -DgeneratePom=true
+  - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.tomleejumah -DartifactId=Custom_Snackbar_Library -Dversion=1.0.0 -Dpackaging=aar -DgeneratePom=true
 

@@ -47,8 +47,8 @@ project.afterEvaluate {
         publishing {
             publications {
                 libraryProject(MavenPublication) {
-                    groupId 'com.github.iamgerryshom'
-                    artifactId 'CustomSnackBar'
+                    groupId 'com.github.tomleejumah'
+                    artifactId 'Custom_Snackbar_Library'
                     version 'v1.0.0'
                     artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
                 }
