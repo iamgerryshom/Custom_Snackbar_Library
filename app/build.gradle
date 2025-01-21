@@ -36,7 +36,7 @@ android {
 
 dependencies {
 
-    implementation project(':CustomSnackbarLib')
+    implementation project(':CustomSnackbarLib') //AA
 
     implementation libs.appcompat
     implementation libs.material
