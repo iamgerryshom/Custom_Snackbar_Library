@@ -1,6 +1,4 @@
 jdk:
-  - openjdk20
-
-build:
-  script:
-    - ./gradlew build
+  - openjdk17
+before_install:
+  - ./scripts/prepareJitpackEnvironment.sh
