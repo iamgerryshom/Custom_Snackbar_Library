@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    id("maven-publish") // For publishing
 }
 
 android {
@@ -22,6 +23,23 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+}
+
+project.afterEvaluate {
+    publishing {
+        publications {
+            libraryProject(MavenPublication) {
+                setGroupId 'com.app'
+                setArtifactId 'CustomSnackbarLib'
+                version '1.0'
+                artifact bundleReleaseAar
+            }
+        }
+
+
     }
 }
 
