@@ -49,17 +49,20 @@ project.afterEvaluate {
                 libraryProject(MavenPublication) {
                     groupId 'com.github.iamgerryshom'
                     artifactId 'CustomSnackBar'
-                    version '1.0.0'
+                    version 'v1.0.0'
                     artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
                 }
             }
             repositories {
                 maven {
                     url 'https://jitpack.io'
+                    /*
                     credentials {
                         username = project.findProperty('jitpack.user') ?: System.getenv('JITPACK_USER')
                         password = project.findProperty('jitpack.token') ?: System.getenv('JITPACK_TOKEN')
                     }
+
+                     */
                 }
             }
         }
