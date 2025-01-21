@@ -56,13 +56,11 @@ project.afterEvaluate {
             repositories {
                 maven {
                     url 'https://jitpack.io'
-                    /*
+
                     credentials {
                         username = project.findProperty('jitpack.user') ?: System.getenv('JITPACK_USER')
                         password = project.findProperty('jitpack.token') ?: System.getenv('JITPACK_TOKEN')
                     }
-
-                     */
                 }
             }
         }
