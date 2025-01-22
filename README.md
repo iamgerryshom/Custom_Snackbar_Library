@@ -10,7 +10,7 @@
 Add the library to your project using JitPack:
 ```gradle
 dependencies {
-    implementation 'com.github.tomleejumah:Custom_Snackbar_Library:latest-version'
+    implementation 'com.github.tomleejumah:Custom_Snackbar_Library:1.3'
 }
 ```
 
