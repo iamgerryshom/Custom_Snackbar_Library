@@ -1,8 +1,14 @@
 package com.app.customsnackbarlib;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,15 +16,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.WindowManager;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.app.customsnackbarlib.enums.CustomAnimation;
 import com.app.customsnackbarlib.enums.CustomSnackBarType;
@@ -27,7 +30,6 @@ import com.google.android.material.shape.CornerFamily;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.shape.ShapeAppearanceModel;
 import com.google.android.material.snackbar.BaseTransientBottomBar;
-import com.google.android.material.snackbar.Snackbar;
 
 public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
 
@@ -53,9 +55,12 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
     private CustomAnimation customEnterAnimation;
     private CustomAnimation customExitAnimation;
     private Interpolator interpolator;
+    private int gravity;
 
     private final String customSnackBarTitle;
     private final String customSnackBarDescription;
+
+    private boolean drawOverApps;
 
     public CustomSnackBar(final ViewGroup parent, final String customSnackBarTitle, final String customSnackBarDescription) {
         super(parent.getContext(), parent, LayoutInflater.from(parent.getContext()).inflate(R.layout.custom_snackbar, parent, false), new SnackbarContentViewCallback());
@@ -64,16 +69,20 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
         this.customSnackBarDescription = customSnackBarDescription;
     }
 
-    public static CustomSnackBar make(final ViewGroup view, final String title, final String description) {
-        if(view == null) throw new RuntimeException("viewGroup cannot be null");
-        if(title == null) throw new RuntimeException("title cannot be null");
-        if(description == null) throw new RuntimeException("description cannot be null");
-        return new CustomSnackBar(view, title, description);
+    private static FrameLayout container;
+    private static WindowManager.LayoutParams params;
+    public static CustomSnackBar make(final Context context, final String title, final String description) {
+        if (context == null) throw new IllegalArgumentException("Context cannot be null");
+        if (title == null) throw new IllegalArgumentException("Title cannot be null");
+        if (description == null) throw new IllegalArgumentException("Description cannot be null");
+        container = createContainer(context);
+        return new CustomSnackBar(container, title, description);
     }
+
 
     public static CustomSnackBar make(final ViewGroup view, final String title) {
         if(view == null) throw new RuntimeException("ViewGroup cannot be null");
-        if(title == null) throw new RuntimeException("title cannot be null");
+        if(title == null) throw new RuntimeException("Title cannot be null");
         return new CustomSnackBar(view, title, null);
     }
 
@@ -172,8 +181,19 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
     }
 
     public CustomSnackBar setStrokeColor(final int strokeColor) {
-        if(strokeWidth <= 0) throw new RuntimeException("StrokeColor was set but strokeWidth probably has a ridiculous value");
+        if(strokeWidth <= 0) throw new RuntimeException("StrokeColor was set but the strokeWidth is either 0 or less than 0");
         this.strokeColor = strokeColor;
+        return this;
+    }
+
+    public CustomSnackBar setGravity(final int gravity) {
+        this.gravity = gravity;
+        return this;
+    }
+
+    public CustomSnackBar setDrawOverApps(final boolean drawOverApps) {
+        if(!overlayPermissionIsGranted(getContext()) && drawOverApps) requestOverlayPermission(getContext());
+        this.drawOverApps = drawOverApps;
         return this;
     }
 
@@ -190,10 +210,60 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
         }
     }
 
+    private static FrameLayout createContainer(Context context) {
+        final FrameLayout container = new FrameLayout(context);
+        container.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT
+        ));
+        return container;
+    }
+
+    private WindowManager.LayoutParams createLayoutParams() {
+        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                drawOverApps ? WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY : WindowManager.LayoutParams.TYPE_APPLICATION_PANEL,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                PixelFormat.TRANSLUCENT
+        );
+        params.gravity = gravity;
+        return params;
+    }
+
+    private boolean overlayPermissionIsGranted(final Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return Settings.canDrawOverlays(context);
+        }
+        return true;
+    }
+
+
+    private void requestOverlayPermission(final Context context) {
+        final Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + context.getPackageName()));
+        context.startActivity(intent);
+    }
+
+    private static WindowManager windowManager;
+    private static void addToWindowManager(Context context, FrameLayout container, WindowManager.LayoutParams params) {
+        windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (windowManager == null) {
+            throw new RuntimeException("Failed to get WindowManager from context.");
+        }
+        windowManager.addView(container, params);
+    }
+
     private BaseCallback<CustomSnackBar> baseCallback = new BaseCallback<CustomSnackBar>() {
         @Override
         public void onDismissed(CustomSnackBar transientBottomBar, int event) {
             super.onDismissed(transientBottomBar, event);
+
+            if (container != null && container.getParent() != null) {
+                //windowManager.removeView(container);
+            }
 
             switch (event) {
                 case DISMISS_EVENT_TIMEOUT:
@@ -210,6 +280,7 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
                     Log.d("CustomSnackbar", "Snackbar dismissed due to another Snackbar appearing");
                     break;
             }
+
         }
     };
 
@@ -219,12 +290,18 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
 
         setDefaults(); //must be called first to init null variables
 
+        params = createLayoutParams();
+
         addCallback(baseCallback);
 
         applyCustomSnackBarBackground();
 
         ((TextView) getView().findViewById(R.id.snackbar_title)).setText(customSnackBarTitle);
         ((TextView) getView().findViewById(R.id.snackbar_description)).setText(customSnackBarDescription == null ? "" : customSnackBarDescription);
+
+        addSwipeToDismiss(getView());
+
+        addToWindowManager(getContext(), container, params);
 
         view.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -238,6 +315,7 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
 
             }
         });
+
 
     }
 
@@ -267,57 +345,33 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
         setDefaultCornerRadiiIfZero();
         setDefaultAnimationsIfNull();
         setStrokeDefaultsIfZero();
+        if(gravity == 0) gravity = Gravity.BOTTOM;
     }
 
 
     private void setStrokeDefaultsIfZero() {
-        if(strokeWidth == 0) {
-            strokeWidth = _defaultStrokeWidth;
-        }
-
-        if(strokeColor == 0) {
-            strokeColor = _defaultStrokeColor;
-        }
-
+        if(strokeWidth == 0) strokeWidth = _defaultStrokeWidth;
+        if(strokeColor == 0) strokeColor = _defaultStrokeColor;
     }
 
     private void setBackgroundDefaultsIfZero() {
-        if(backgroundColor == 0) {
-            backgroundColor = customSnackBarType.getColorResource(getContext());
-        }
+        if(backgroundColor == 0) backgroundColor = customSnackBarType.getColorResource(getContext());
     }
 
     private void setDefaultAnimationsIfNull() {
-        if(customEnterAnimation == null) {
-            customEnterAnimation = CustomAnimation.POP_IN;
-        }
-        if(customExitAnimation == null) {
-            customExitAnimation = CustomAnimation.POP_OUT;
-        }
+        if(customEnterAnimation == null) customEnterAnimation = CustomAnimation.POP_IN;
+        if(customExitAnimation == null) customExitAnimation = CustomAnimation.POP_OUT;
     }
 
     private void setDefaultCornerRadiiIfZero() {
-        if(topRightCornerRadius == 0) {
-            topRightCornerRadius = _defaultCornerRadius;
-        }
-
-        if(topLeftCornerRadius == 0) {
-            topLeftCornerRadius = _defaultCornerRadius;
-        }
-
-        if(bottomRightCornerRadius == 0) {
-            bottomRightCornerRadius = _defaultCornerRadius;
-        }
-
-        if(bottomLeftCornerRadius == 0) {
-            bottomLeftCornerRadius = _defaultCornerRadius;
-        }
+        if(topRightCornerRadius == 0) topRightCornerRadius = _defaultCornerRadius;
+        if(topLeftCornerRadius == 0) topLeftCornerRadius = _defaultCornerRadius;
+        if(bottomRightCornerRadius == 0) bottomRightCornerRadius = _defaultCornerRadius;
+        if(bottomLeftCornerRadius == 0) bottomLeftCornerRadius = _defaultCornerRadius;
     }
 
     private void setDefaultInterpolatorIfNull() {
-        if(interpolator == null) {
-            interpolator = new OvershootInterpolator();
-        }
+        if(interpolator == null) interpolator = new OvershootInterpolator();
     }
 
     private Drawable getShapeableDrawable(

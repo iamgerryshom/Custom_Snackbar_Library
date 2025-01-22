@@ -1,6 +1,7 @@
 package com.app.customsnackbarlibrary;
 
 import android.os.Bundle;
+import android.view.Gravity;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,32 +26,31 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         binding.info.setOnClickListener(v -> {
-            CustomSnackBar.make(binding.getRoot(), "Download Complete", "The file has been successfully downloaded.")
+            CustomSnackBar.make(this, "Download Complete", "The file has been successfully downloaded.")
                     .setCustomSnackBarType(CustomSnackBarType.INFO)
                     .show();
         });
 
         binding.warning.setOnClickListener(v -> {
-            CustomSnackBar.make(binding.getRoot(), "Low Storage Space", "Consider freeing up space to avoid issues.")
+            CustomSnackBar.make(this, "Low Storage Space", "Consider freeing up space to avoid issues.")
                     .setCustomSnackBarType(CustomSnackBarType.WARNING)
                     .show();
         });
 
         binding.error.setOnClickListener(v -> {
-            CustomSnackBar.make(binding.getRoot(), "Upload Failed", "Unable to upload the file. Please try again.")
+            CustomSnackBar.make(this, "Upload Failed", "Unable to upload the file. Please try again.")
                     .setCustomSnackBarType(CustomSnackBarType.ERROR)
                     .show();
         });
 
         binding.success.setOnClickListener(v -> {
-            CustomSnackBar.make(binding.getRoot(), "Connection Established", "You are now connected to the server.")
+            CustomSnackBar.make(this, "Connection Established", "You are now connected to the server.")
                     .setCustomSnackBarType(CustomSnackBarType.SUCCESS)
+                    .setGravity(Gravity.TOP)
                     .show();
         });
 
-
     }
-
 
     private void init() {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
