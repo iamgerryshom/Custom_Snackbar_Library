@@ -72,17 +72,17 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
     private static FrameLayout container;
     private static WindowManager.LayoutParams params;
     public static CustomSnackBar make(final Context context, final String title, final String description) {
-        if (context == null) throw new IllegalArgumentException("Context cannot be null");
-        if (title == null) throw new IllegalArgumentException("Title cannot be null");
-        if (description == null) throw new IllegalArgumentException("Description cannot be null");
+        if (context == null) throw new NullPointerException("Context cannot be null");
+        if (title == null) throw new NullPointerException("Title cannot be null");
+        if (description == null) throw new NullPointerException("Description cannot be null");
         container = createContainer(context);
         return new CustomSnackBar(container, title, description);
     }
 
 
     public static CustomSnackBar make(final ViewGroup view, final String title) {
-        if(view == null) throw new RuntimeException("ViewGroup cannot be null");
-        if(title == null) throw new RuntimeException("Title cannot be null");
+        if(view == null) throw new NullPointerException("ViewGroup cannot be null");
+        if(title == null) throw new NullPointerException("Title cannot be null");
         return new CustomSnackBar(view, title, null);
     }
 
@@ -94,68 +94,68 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
 
     /**/
     private CustomSnackBar setInterpolator(final Interpolator interpolator) {
-        if(interpolator == null) throw new RuntimeException("Interpolator cannot be null");
+        if(interpolator == null) throw new NullPointerException("Interpolator cannot be null");
         this.interpolator = interpolator;
         return this;
     }
 
     public CustomSnackBar setCustomExitAnimation(final CustomAnimation customExitAnimation) {
-        if(customExitAnimation == null) throw new RuntimeException("CustomAnimation cannot be null");
+        if(customExitAnimation == null) throw new NullPointerException("CustomAnimation cannot be null");
         this.customExitAnimation = customExitAnimation;
         return this;
     }
 
     public CustomSnackBar setCustomEnterAnimation(final CustomAnimation customEnterAnimation) {
-        if(customEnterAnimation == null) throw new RuntimeException("CustomAnimation cannot be null");
+        if(customEnterAnimation == null) throw new NullPointerException("CustomAnimation cannot be null");
         this.customEnterAnimation = customEnterAnimation;
         return this;
     }
 
     public CustomSnackBar setCustomSnackBarType(final CustomSnackBarType customSnackBarType) {
-        if(customSnackBarType == null) throw new RuntimeException("CustomSnackBarType cannot be null");
+        if(customSnackBarType == null) throw new NullPointerException("CustomSnackBarType cannot be null");
         this.customSnackBarType = customSnackBarType;
         return this;
     }
 
     public CustomSnackBar setCornerRadius(final int cornerRadius) {
-        if(cornerRadius < 0) throw new RuntimeException("cornerRadius cannot be less than zero");
+        if(cornerRadius < 0) throw new NullPointerException("cornerRadius cannot be less than zero");
         topLeftCornerRadius = topRightCornerRadius = bottomRightCornerRadius = bottomLeftCornerRadius = DpPxHelper.dpToPx(getContext(), cornerRadius);
         return this;
     }
 
 
     public CustomSnackBar setTopCornerRadius(final float topCornerRadius)  {
-        if(topCornerRadius < 0) throw new RuntimeException("topCornerRadius cannot be less than zero");
+        if(topCornerRadius < 0) throw new IllegalArgumentException("topCornerRadius cannot be less than zero");
         topLeftCornerRadius = topRightCornerRadius = DpPxHelper.dpToPx(getContext(), topCornerRadius);
         return this;
     }
 
     public CustomSnackBar setBottomCornerRadius(final float bottomCornerRadius) {
-        if(bottomCornerRadius < 0) throw new RuntimeException("bottomCornerRadius cannot be less than zero");
+        if(bottomCornerRadius < 0) throw new IllegalArgumentException("bottomCornerRadius cannot be less than zero");
         bottomRightCornerRadius = bottomLeftCornerRadius = DpPxHelper.dpToPx(getContext(), bottomCornerRadius);
         return this;
     }
 
     public CustomSnackBar setTopRightCornerRadius(final int topRightCornerRadius) {
-        if(topRightCornerRadius < 0) throw new RuntimeException("topRightCornerRadius cannot be less than zero");
+        if(topRightCornerRadius < 0) throw new IllegalArgumentException("topRightCornerRadius cannot be less than zero");
         this.topRightCornerRadius = DpPxHelper.dpToPx(getContext(), topRightCornerRadius);
         return this;
     }
 
     public CustomSnackBar setTopLeftCornerRadius(final int topLeftCornerRadius) {
-        if(topLeftCornerRadius < 0) throw new RuntimeException("topLeftCornerRadius cannot be less than zero");
+        if(topLeftCornerRadius < 0) throw new IllegalArgumentException("topLeftCornerRadius cannot be less than zero");
         this.topLeftCornerRadius = DpPxHelper.dpToPx(getContext(), topLeftCornerRadius);
         return this;
     }
 
     public CustomSnackBar setBottomLeftCornerRadius(final int bottomLeftCornerRadius) {
-        if(bottomLeftCornerRadius < 0) throw new RuntimeException("bottomLeftCornerRadius cannot be less than zero");
+        if(bottomLeftCornerRadius < 0) throw new IllegalArgumentException("bottomLeftCornerRadius cannot be less than zero");
         this.bottomLeftCornerRadius = DpPxHelper.dpToPx(getContext(), bottomLeftCornerRadius);
         return this;
     }
 
     public CustomSnackBar setBottomRightCornerRadius(final int bottomRightCornerRadius) {
-        if(bottomRightCornerRadius < 0) throw new RuntimeException("bottomRightCornerRadius cannot be less than zero");
+        if(bottomRightCornerRadius < 0) throw new IllegalArgumentException("bottomRightCornerRadius cannot be less than zero");
         this.bottomRightCornerRadius = DpPxHelper.dpToPx(getContext(), bottomRightCornerRadius);
         return this;
     }
@@ -170,19 +170,19 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
     }
 
     public CustomSnackBar setStrokeWidth(final int strokeWidth) {
-        if(strokeWidth < 0) throw new RuntimeException("strokeWidth cannot be less than zero");
+        if(strokeWidth < 0) throw new IllegalArgumentException("strokeWidth cannot be less than zero");
         this.strokeWidth = strokeWidth;
         return this;
     }
 
     public CustomSnackBar setOpacityPercentage(final float opacityPercentage) {
-        if(opacityPercentage < 0 || opacityPercentage > 100) throw new RuntimeException("opacityPercentage can only be between 0 and 100");
+        if(opacityPercentage < 0 || opacityPercentage > 100) throw new IndexOutOfBoundsException("opacityPercentage can only be between 0 and 100");
         this.opacityPercentage = opacityPercentage;
         return this;
     }
 
     public CustomSnackBar setStrokeColor(final int strokeColor) {
-        if(strokeWidth <= 0) throw new RuntimeException("StrokeColor was set but the strokeWidth is either 0 or less than 0");
+        if(strokeWidth <= 0) throw new IllegalStateException("StrokeColor was set but the strokeWidth is either 0 or less than 0");
         this.strokeColor = strokeColor;
         return this;
     }

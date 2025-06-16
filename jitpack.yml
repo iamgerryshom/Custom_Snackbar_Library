@@ -1,9 +1,8 @@
 jdk:
   - openjdk17
 before_install:
-  - ./scripts/prepareJitpackEnvironment.sh
-  - ./gradlew assembleRelease
+  - bash ./gradlew assembleRelease
 install:
   - FILE="CustomSnackbarLib/build/outputs/aar/CustomSnackbarLib-release.aar"
-  - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.tomleejumah -DartifactId=Custom_Snackbar_Library -Dversion=1.0.0 -Dpackaging=aar -DgeneratePom=true
+  - mvn install:install-file -Dfile=$FILE -DgroupId=com.github.iamgerryshom -DartifactId=Custom_Snackbar_Library -Dversion=1.0.0 -Dpackaging=aar -DgeneratePom=true
 
