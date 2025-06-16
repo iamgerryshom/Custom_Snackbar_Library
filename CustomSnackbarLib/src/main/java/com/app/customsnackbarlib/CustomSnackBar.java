@@ -123,6 +123,7 @@ public class CustomSnackBar extends BaseTransientBottomBar<CustomSnackBar> {
         return this;
     }
 
+
     public CustomSnackBar setTopCornerRadius(final float topCornerRadius)  {
         if(topCornerRadius < 0) throw new RuntimeException("topCornerRadius cannot be less than zero");
         topLeftCornerRadius = topRightCornerRadius = DpPxHelper.dpToPx(getContext(), topCornerRadius);
